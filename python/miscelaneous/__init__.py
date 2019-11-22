@@ -5,6 +5,9 @@ import cv2
 def listFiles(path):
     return [f for f in listdir(path) if isfile(join(path, f))]
 
+def listDir(path):
+    return [f for f in listdir(path) if not isfile(join(path, f))]
+
 def loadImage(path):
     #load image
     return cv2.imread(path)
