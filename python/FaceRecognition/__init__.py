@@ -16,7 +16,10 @@ for user in userNames:
 
 
 def votingRecognition(unknown_image):
-    unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+    unknown_faces = face_recognition.face_encodings(unknown_image)
+    if not unknown_faces:
+        return 'no face to detect'
+    unknown_encoding = unknown_faces[0]
     results = face_recognition.compare_faces(user_encodings, unknown_encoding)
     # print(results)
     zipped = list(zip(results, names))
@@ -26,7 +29,7 @@ def votingRecognition(unknown_image):
     for result, name in zipped:
         userResults[name].append(int(result))
     max = 0
-    bestMatch = 'unknown user'
+    bestMatch = 'unknown user detected'
     # print(userResults)
     for name in userResults:
         # print(name)
@@ -35,4 +38,4 @@ def votingRecognition(unknown_image):
         if meanScore > max:
             max = meanScore
             bestMatch = name
-    return bestMatch
+    return f'Hello {bestMatch}'

@@ -20,13 +20,10 @@ def hello_world():
     file_name = './data/test.jpeg'
     i = requests.get(CAM_CAPTURE_URL)
     if i.status_code == requests.codes.ok:
-        # with iopen(file_name, 'wb') as file:
-        #     file.write(i.content)
         arr = np.fromstring(i.content, dtype=np.uint8)
         im = cv2.imdecode(arr, 1)
         cv2.imwrite('./data/lastPicture.jpeg', im)
         img = loadImage('./data/lastPicture.jpeg')
-        user = votingRecognition(img)
-        return f'hello {user}'
+        return votingRecognition(img)
     else:
         return 'sorry I don\' get it'
