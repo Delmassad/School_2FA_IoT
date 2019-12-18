@@ -9,14 +9,14 @@ from FaceRecognition import votingRecognition
 from miscelaneous import loadImage
 app = Flask(__name__)
 
-CAM_CAPTURE_URL = 'http://192.168.4.38/capture'
+CAM_CAPTURE_URL = 'http://192.168.43.60/capture'
 
 # dataTransfer('./data/', 'LastName', './FaceRecognition/data/')
 
 # img = loadImage('./data/lastPicture.jpeg')
 
 @app.route('/')
-def hello_world():
+def who_am_i():
     file_name = './data/test.jpeg'
     i = requests.get(CAM_CAPTURE_URL)
     if i.status_code == requests.codes.ok:
@@ -27,3 +27,10 @@ def hello_world():
         return votingRecognition(img)
     else:
         return 'sorry I don\' get it'
+
+@app.route('/save_picture/<name>')
+def save_picture(name=None):
+    if name is None:
+        return 'ça n\'a pas marché'
+    dataTransfer('./data/', name, './FaceRecognition/data/')
+    return f'okay c\'est fait chef {name}'
