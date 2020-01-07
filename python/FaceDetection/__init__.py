@@ -1,5 +1,6 @@
 # TODO: speed comparisons of both classifiers
 import time
+from datetime import datetime
 from os import listdir, makedirs
 from os.path import isfile, join, isdir
 from miscelaneous import listFiles, listDir, convertToGray
@@ -40,8 +41,8 @@ def dataTransfer(sourcePath, username, destPath):
         img = getFacesHaar(cv2.imread(path))
         if img:
             cropped_files.append(*img)
-    for index, img in enumerate(cropped_files):
-        destPath_f = f'{destPath}{username}/face_{index}.jpg'
+    for img in cropped_files:
+        destPath_f = f'{destPath}{username}/face_{datetime.now()}.jpg'
         print(destPath_f)
         if not isdir(f'{destPath}{username}'):
             makedirs(f'{destPath}{username}')
