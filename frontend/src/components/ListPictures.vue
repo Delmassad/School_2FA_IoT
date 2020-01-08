@@ -1,24 +1,20 @@
 <template>
   <div class="ListPictures">
-     <h2>photos de {{name}}</h2> 
-      <img v-for="url of images" v-bind:key="url" v-bind:src="url" alt=""
-      height="60"
-      width="60">
+    <h2>photos de {{name}}</h2>
+    <div id="images_container">
+      <img v-for="url of images" v-bind:key="url" v-bind:src="url" alt height="60" width="60" />
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ListPictures',
-  props: [
-      'name',
-      'images',
-  ],
+  name: "ListPictures",
+  props: ["name", "images"],
   data: () => {
-      return {
-      };
-  },
-}
+    return {};
+  }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -36,5 +32,14 @@ li {
 }
 a {
   color: #42b983;
+}
+.images_container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+img{
+  margin: 1em;
+  border-radius: 0.3em;
 }
 </style>

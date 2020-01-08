@@ -20,16 +20,18 @@
     />
     <h1>Flic de classe</h1>
     <p>Vérification de la présence en cours</p>
-    <Stream />
-    <ListPictures v-show="picturesOf" v-bind:images="picturesURL" v-bind:name="picturesOf"/>
+    <Stream v-on:newPicture="refreshPicture()" />
+    <ListPictures v-show="picturesOf" v-bind:images="picturesURL" v-bind:name="picturesOf" />
     <div>
-      <h2>dernier visage détecté</h2>
-      <img src="http://127.0.0.1:5000/static/lastPicture/lastPicture.jpeg" alt />
+      <h2>derniere photo prise</h2>
+      <img v-if="lastPicture" v-bind:src="lastPicture" />
     </div>
-    <ul>
-      <li v-for="name of names" v-bind:key="name">
-        <button @click="savePictureClick(name)">save picture</button>
-        <button @click="getPicturesOf(name)">see pictures</button>
+    <ul class="names_container">
+      <li v-for="name of names" v-bind:key="name" class="name">
+        <div class="name_buttons">
+          <button @click="savePictureClick(name)">c'etait moi !</button>
+          <button @click="getPicturesOf(name)" v-bind:class="{selected: name === picturesOf}">mes autres photos</button>
+        </div>
         {{name}}
       </li>
     </ul>
@@ -37,24 +39,33 @@
 </template>
 
 <script>
+/* eslint-disable */
 import Stream from "./components/Stream.vue";
 import ListPictures from "./components/ListPictures.vue";
-import { getNames, savePicture, getPicturesURL } from "./service";
+import {
+  getNames,
+  savePicture,
+  getPicturesURL,
+  getLastPicture
+} from "./service";
+import { STATIC_URL } from "./env";
 
 export default {
   name: "app",
   components: {
     Stream,
-    ListPictures,
+    ListPictures
   },
   data: () => {
     return {
       names: [],
-      picturesOf: '',
+      lastPicture: `${STATIC_URL}/lastPicture/lastPicture.jpeg`,
+      picturesOf: "",
       picturesURL: []
     };
   },
   mounted: function() {
+    this.refreshPicture();
     getNames().then(n => (this.names = n));
   },
   methods: {
@@ -68,6 +79,9 @@ export default {
       } catch {
         console.error(`cannot get file URL for pictures of ${name}`);
       }
+    },
+    refreshPicture: function() {
+      getLastPicture().then(file_name => (this.lastPicture = `${STATIC_URL}/lastPicture/${file_name}`));
     }
   }
 };
@@ -81,5 +95,26 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.names_container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 25%;
+}
+.name {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.name_buttons{
+  margin-right: 1em;
+}
+button{
+  border-radius: 0.3em;
+}button:hover {
+  background-color: rgb(159, 191, 228);
+}
+.selected{
+  background-color: rgb(162, 189, 219);
 }
 </style>

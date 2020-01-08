@@ -1,21 +1,29 @@
 <template>
   <div class="Stream">
-    <!-- <img src="http://192.168.4.4:81/stream" /> -->
+    <img v-bind:src="stream_URL" alt='ESP non connecte'/>
     <button @click="whoAmI_alert()">Qui suis-je ?</button>
   </div>
-
 </template>
 <script>
 import { whoAmI } from "../service";
+import { ESP_URL } from '../env';
+
 export default {
   name: "Stream",
   props: {},
+  data: () => {
+    return {
+      stream_URL: `${ESP_URL}/stream`,
+    };
+  },
   methods: {
     whoAmI_alert: async function() {
       try {
         const name = await whoAmI();
+        this.$emit('newPicture');
         alert(`bonjour ${name}`);
       } catch {
+        this.$emit('newPicture');
         alert('je ne te connais pas encore');
       }
     }

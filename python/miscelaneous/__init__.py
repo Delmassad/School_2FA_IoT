@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, remove
 from os.path import isfile, join
 import cv2
 
@@ -24,3 +24,8 @@ def saveResult(img, faces, path):
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
     cv2.imwrite(path, img)
+
+def empty_dir(dir_path):
+    files = listFiles(dir_path)
+    for file in files:
+        remove(f'{dir_path}/{file}')

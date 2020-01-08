@@ -1,12 +1,14 @@
 from flask import Flask
+import os
 from io import open as iopen
+from datetime import datetime
 from base64 import decodebytes
 import numpy as np
 import cv2
 import requests
 from FaceDetection import dataTransfer
 from FaceRecognition import votingRecognition
-from miscelaneous import loadImage, listdir, listFiles
+from miscelaneous import loadImage, listdir, listFiles, empty_dir
 from flask_cors import CORS
 from flask import jsonify, abort, Response
 app = Flask(__name__, static_folder="static")
@@ -29,11 +31,23 @@ def who_am_i():
     if i.status_code == requests.codes.ok:
         arr = np.fromstring(i.content, dtype=np.uint8)
         im = cv2.imdecode(arr, 1)
-        cv2.imwrite('./static/lastPicture.jpeg', im)
-        img = loadImage('./static/lastPicture.jpeg')
+        # remove old last pic
+        empty_dir('./static/lastPicture')
+        # write the new one
+        time = datetime.now()
+        cv2.imwrite(f'./static/lastPicture/lastPicture_{time}.jpeg', im)
+        img = loadImage(f'./static/lastPicture/lastPicture_{time}.jpeg')
         return votingRecognition(img)
     else:
         abort(500)
+# # for testing
+#     img_name = listFiles('./static/lastPicture')[0]
+#     img = loadImage(f'./static/lastPicture/{img_name}')
+#     empty_dir('./static/lastPicture')
+#     time = datetime.now()
+#     cv2.imwrite(f'./static/lastPicture/lastPicture_{time}.jpeg', img)
+#     img = loadImage(f'./static/lastPicture/lastPicture_{time}.jpeg')
+#     return 'vigny'
 
 @app.route('/names')
 def get_names():
@@ -53,3 +67,7 @@ def get_pictires_urls(name=None):
         abort(500)
     URLs = listFiles(f'./static/FaceRecognition/{name}')
     return jsonify(URLs)
+
+@app.route('/last_picture')
+def get_last_pic_urls():
+    return listFiles('./static/lastPicture')[0]
